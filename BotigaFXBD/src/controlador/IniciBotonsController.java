@@ -29,7 +29,7 @@ public class IniciBotonsController extends Application {
 	private Locale localitzacioDisplay = Locale.getDefault(Category.DISPLAY);
 	private ResourceBundle texts = ResourceBundle.getBundle("vista.Texts", localitzacioDisplay);
 	
-	private Connection conexionBD;
+	private Connection conn;
 	
 	@FXML
     private AnchorPane root;
@@ -50,11 +50,11 @@ public class IniciBotonsController extends Application {
 			Class.forName("org.postgresql.Driver");
 
 			//Establir la connexió amb la BD
-			String urlBaseDades = "jdbc:postgresql://192.168.123.31/botiga";
+			String urlBaseDades = "jdbc:postgresql://192.168.123.35/botiga";
 			String usuari = "postgres";
-			String contrasenya = "Destino20$";
-			conexionBD = DriverManager.getConnection(urlBaseDades , usuari, contrasenya);
-			if(conexionBD!=null) {
+			String contrasenya = "Badia123";
+			conn = DriverManager.getConnection(urlBaseDades , usuari, contrasenya);
+			if(conn!=null) {
 				System.out.println("Conexion DB establecida");
 			}
 
@@ -110,7 +110,7 @@ public class IniciBotonsController extends Application {
 		
 			ProductosController productoControler = (ProductosController)loaderview.getController();
 			try {
-				productoControler.setConnection(conexionBD);
+				productoControler.setConnection(conn);
 			} catch (Exception e1) {
 				System.out.println(e1.getMessage());
 			}
@@ -145,7 +145,7 @@ public class IniciBotonsController extends Application {
 			super.stop();
 			
 			try {
-				if (conexionBD != null) conexionBD.close();
+				if (conn != null) conn.close();
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 			}

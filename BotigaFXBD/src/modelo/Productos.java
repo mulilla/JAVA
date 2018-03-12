@@ -15,15 +15,13 @@ import java.util.TreeSet;
 
 public class Productos {
 	
-	private Connection conexionBD;
+	private Connection conn;
 	
 	public Productos(Connection conexionBD) {
-		this.conexionBD=conexionBD;
+		this.conn=conexionBD;
 	}
 
 
-	
-	//Metodo que recibe un producto y lo introduce en la estructura de datos
 	public void addProducto(Producto productemp) throws SQLException {
 		
 		
@@ -33,7 +31,7 @@ public class Productos {
 		if(productemp instanceof Joc ) {
 			
 			Joc joc=(Joc)productemp;
-			PreparedStatement sta=conexionBD.prepareStatement("INSERT INTO jocs (idproducte,nom,preu,edat,idproveidor,stock,fecha_inicio,fecha_final,tipo) VALUES(?,?,?,?,?,?,?,?,?)");
+			PreparedStatement sta=conn.prepareStatement("INSERT INTO jocs (idproducte,nom,preu,edat,idproveidor,stock,fecha_inicio,fecha_final,tipo) VALUES(?,?,?,?,?,?,?,?,?)");
 			sta.setString(1,joc.getId());
 			sta.setString(2, joc.getNom());
 			sta.setDouble(3, joc.getPreu());
@@ -50,7 +48,7 @@ public class Productos {
 		}else if(productemp instanceof Pack) {
 			
 			Pack pack=(Pack)productemp;
-			PreparedStatement sta=conexionBD.prepareStatement("INSERT INTO packs1 (idproducte,nom,preu,porc_dto,idproveidor,jocs,stock,fecha_inicio,fecha_final,tipo) VALUES(?,?,?,?,?,?,?,?,?,?)");
+			PreparedStatement sta=conn.prepareStatement("INSERT INTO packs1 (idproducte,nom,preu,porc_dto,idproveidor,jocs,stock,fecha_inicio,fecha_final,tipo) VALUES(?,?,?,?,?,?,?,?,?,?)");
 			sta.setString(1,pack.getId());
 			sta.setString(2, pack.getNom());
 			sta.setDouble(3, pack.getPreu());
@@ -62,7 +60,7 @@ public class Productos {
 			//https://stackoverflow.com/questions/17842211/how-to-use-an-arraylist-as-a-prepared-statement-parameter
 			
 			String[] lista_juegos_array=pack.getListaJuegos().toArray(new String[pack.getListaJuegos().size()]);
-			Array lista = conexionBD.createArrayOf("INTEGER", lista_juegos_array);
+			Array lista = conn.createArrayOf("INTEGER", lista_juegos_array);
 			sta.setArray(6,lista );
 			sta.setInt(7, pack.getStock());
 			sta.setDate(8, java.sql.Date.valueOf(pack.getFecha_inicio()));
@@ -86,7 +84,7 @@ public class Productos {
 	@SuppressWarnings("resource")
 	public Producto searchProducto(String id) {
 		try {
-			PreparedStatement sta=conexionBD.prepareStatement("SELECT tipo FROM productes WHERE idproducte=?");
+			PreparedStatement sta=conn.prepareStatement("SELECT tipo FROM productes WHERE idproducte=?");
 			sta.setString(1, id);
 			ResultSet rs=sta.executeQuery();
 			
@@ -98,7 +96,7 @@ public class Productos {
 				switch (tipo) {
 					case "Joc":
 						
-						sta=conexionBD.prepareStatement("SELECT * FROM jocs WHERE idproducte=?");
+						sta=conn.prepareStatement("SELECT * FROM jocs WHERE idproducte=?");
 						sta.setString(1, id);
 						rs=sta.executeQuery();
 						
@@ -118,7 +116,7 @@ public class Productos {
 					
 					case "Pack":
 						
-						sta=conexionBD.prepareStatement("SELECT * FROM packs1 WHERE idproducte=?");
+						sta=conn.prepareStatement("SELECT * FROM packs1 WHERE idproducte=?");
 						sta.setString(1, id);
 						rs=sta.executeQuery();
 						
@@ -127,14 +125,14 @@ public class Productos {
 							//Convierto la array cruda de lista de juegos en un Treset<String> para poder construir el pack
 							//Posdata me cago en todos sus muertos
 							Array array=rs.getArray("jocs");
-							Integer[] array_int = (Integer[])array.getArray();
-							String string_lista =Arrays.toString(array_int);
+							String[] array_str = (String[])array.getArray();
+							String string_lista =Arrays.toString(array_str);
 							string_lista=string_lista.substring(1, string_lista.length()-1);
 							String[] array_string = string_lista.split(","+" ");
 							List<String> list = Arrays.asList(array_string);
 							TreeSet<String> lista_juegos = new TreeSet<String>(list);
 							
-							
+						
 							
 						
 							Pack pack=new Pack(rs.getString("idproducte"), rs.getString("nom"), rs.getDouble("preu"), rs.getInt("stock"), 
@@ -187,11 +185,12 @@ public class Productos {
 	}
 	
 	//Recibe un ID y los busca en la estructura de datos, si existe borra el producto
-	public boolean deleteProducto(String id){
+	public boolean deleteProducto(String id) throws SQLException{
 		
-		//implementar
+		PreparedStatement sta = conn.prepareStatement("delete from productes where idproducte=?");
+		sta.setString(1, id);
+		sta.executeUpdate();
 		return true;
-		
 		
 	}
 	
@@ -199,7 +198,8 @@ public class Productos {
 	
 	
 	public void closeDB() throws SQLException {
-		if(conexionBD!=null) conexionBD.close();
+		if(conn!=null) conn.close();
+		
 		
 	}
 			

@@ -31,7 +31,7 @@ public class ProductosController {
 
 	private Stage ventana;
 	@SuppressWarnings("unused")
-	private Connection conexionBD;
+	private Connection conn;
 	private Productos dao_productos=null;
 
 	// Inyecion de los campos Producto
@@ -241,7 +241,7 @@ public class ProductosController {
 					
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.initOwner(ventana);
-					alert.setTitle("Error al guardar en la BD");
+					alert.setTitle("Error al guardar en la Base de Datos");
 					alert.setHeaderText("Error en el registro del juego");
 					alert.setContentText(e.getMessage());
 
@@ -383,11 +383,27 @@ public class ProductosController {
 	@FXML
 	private void OnActioneliminarButton(ActionEvent event) {
 		
-		//Implementar 
-		//cojer la ID de un registro existente y mandarselo al DAO 
-		
-		//dao_productos.deleteProducto(id)
-		
+		String id=idTextfield.getText();
+		try {
+			dao_productos.deleteProducto(id);
+			limpiarFormulario();
+			nomTexfield.setDisable(true);
+			stockTexfield.setDisable(true);
+			I_catalogoDatePicker.setDisable(true);
+			f_catalogoDatePicker.setDisable(true);
+			tipoComboBox.setDisable(true);
+			precioTextfield.setDisable(true);
+			datosTabpane.setDisable(true);
+			guardarButton.setDisable(true);
+			modificarButton.setDisable(true);
+		} catch (SQLException e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.initOwner(ventana);
+			alert.setTitle("Error al borrar en la BD");
+			alert.setContentText(e.getMessage());
+
+			alert.showAndWait();
+		}
 		
 		
 	}
@@ -399,7 +415,7 @@ public class ProductosController {
 
 	}
 
-	//CONSTRUCT 
+
 	
 	
 	public Stage getVentana() {
@@ -410,11 +426,11 @@ public class ProductosController {
 		this.ventana = ventana;
 	}
 	
-	public void setConnection(Connection conexionBD) throws Exception {
-		this.conexionBD=conexionBD;
+	public void setConnection(Connection conn) throws Exception {
+		this.conn=conn;
 		
-		if(conexionBD!=null) {
-			dao_productos=new Productos(conexionBD);
+		if(conn!=null) {
+			dao_productos=new Productos(conn);
 		}else {
 			Exception error= new Exception("La conexion a la BD no se ha podido establecer desde el controlador");
 			throw error;
