@@ -156,13 +156,10 @@ public class ProductosController {
 					edadminimaTextfield.setText(String.valueOf(juego.getEdad_minima()));
 					proveedorTextField.setText(String.valueOf(juego.getId_proveedor()));
 
-					// Desabilito el campo combo para que al modificar el producto no se elija
-					// otro tipo de producto (Eso seria un nuevo producto no una modificacion)
 					tipoComboBox.setDisable(true);
-					// Habilito la Tab correspondiente al producto
+
 					packTab.setDisable(true);
 					jocTab.setDisable(false);
-					// Abro el Tab que toca
 					datosTabpane.getSelectionModel().select(jocTab);
 				} else {
 					Pack pack = (Pack) dao_productos.searchProducto(idTextfield.getText());
@@ -175,27 +172,23 @@ public class ProductosController {
 					listadejuegosTextfield.setText(pack.listajuegosToString());
 					tipoComboBox.setValue("Pack");
 
-					// Desabilito el campo combo para que al modificar el producto no se elija
-					// otro tipo de producto (Eso seria un nuevo producto no una modificacion)
 					tipoComboBox.setDisable(true);
-					// Habilito la Tab correspondiente al producto
+
 					jocTab.setDisable(true);
 					packTab.setDisable(false);
-					// Abro el Tab que toca
+
 					datosTabpane.getSelectionModel().select(packTab);
 
 				}
 
 			} else {
-				// Si no existe Nuevo registro limpio formulario menos ID y habilito el campo
-				// stock
 				nomTexfield.clear();
 				stockTexfield.setEditable(true);
 				stockTexfield.setDisable(false);
 				stockTexfield.clear();
 				I_catalogoDatePicker.getEditor().clear();
 				f_catalogoDatePicker.getEditor().clear();
-				// Vuelvo a habilitar el campo combo y lo seteo por defecto
+
 				tipoComboBox.setDisable(false);
 				tipoComboBox.setValue("Elije");
 
@@ -204,13 +197,11 @@ public class ProductosController {
 				proveedorTextField.clear();
 				descuentoTextField.clear();
 				listadejuegosTextfield.clear();
-				// Habilito el boton guardar para el insert y quito el modificar y borrar
+
 				guardarButton.setDisable(false);
 				modificarButton.setDisable(true);
 				eliminarButton.setDisable(true);
 
-				// quito el tab pane a la espera del evento del combobox en un nuevo registro
-				// Para evitar insertar datos de un pack en un joc
 				datosTabpane.setDisable(true);
 
 			}
@@ -220,9 +211,6 @@ public class ProductosController {
 
 	@FXML
 	private void OnActionguardarButton(ActionEvent event) {
-
-		// Inserta un nuevo producto al clicar en guardar
-
 		
 
 		if (tipoComboBox.getValue().equals("Joc")) {
@@ -329,11 +317,9 @@ public class ProductosController {
 	}
 
 	@FXML
-	private void OnActionmodificarButton(ActionEvent event) {
-		// Recojo el tipo de producto
+	private void OnActionmodificarButton(ActionEvent event) throws SQLException {
 		String value = tipoComboBox.getSelectionModel().getSelectedItem();
 
-		// Envio los datos al DAO y este sobreescribira los productos
 		if (value.equals("Joc")) {
 			
 			
@@ -365,7 +351,6 @@ public class ProductosController {
 		}
 
 		limpiarFormulario();
-		// AL modificar un producto quito la interfaz de nuevo
 		nomTexfield.setDisable(true);
 		stockTexfield.setDisable(true);
 		I_catalogoDatePicker.setDisable(true);
@@ -410,7 +395,6 @@ public class ProductosController {
 
 	@FXML
 	private void OnActionsalirButton(ActionEvent event) throws IOException {
-		// Evento al clicar sobre el boton salir
 		salir();
 
 	}
@@ -439,10 +423,8 @@ public class ProductosController {
 		
 	}
 
-	// Metodo que se ejecuta al salir de la aplicacion
 	public void salir() throws IOException {
 
-		// Cierro la conexion de la BD y cierro la ventana
 		try {
 			dao_productos.closeDB();
 		} catch (SQLException e) {
@@ -486,8 +468,6 @@ public class ProductosController {
 		
 	
 		StringBuffer error=new StringBuffer();
-		//Compruebo los campos genericos de un producto
-		
 		if(nomTexfield.getText()==null||nomTexfield.getText().length()==0) error.append("Campo Nombre incorrecto debe tener almenos un caracter");
 		
 		if(stockTexfield.getText()==null||stockTexfield.getText().length()==0) error.append("\nCampo Stock incorrecto debe tener como minimo una unidad");
@@ -516,9 +496,6 @@ public class ProductosController {
 				error.append("\nEl campo precio debe ser un numero real");
 			}
 		}
-		
-		//Compruebo los campos especificos de cada producto
-		
 		
 		switch(tipo) {
 		
