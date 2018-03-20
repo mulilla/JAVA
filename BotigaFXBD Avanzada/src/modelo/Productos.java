@@ -27,17 +27,20 @@ public class Productos {
 
 	public void addProducto(Producto productemp) throws SQLException {
 
-		if(productemp instanceof Joc ) {				
-			Statement stament=conn.prepareStatement("insert into jocs (idproducte,nom,preu,porc_dto,idproveidor)");
+		if(productemp instanceof Joc ) {					
 			Joc joc=(Joc)productemp;
-			
-			LocalDate localDateInicio = joc.getFecha_inicio();
-			LocalDate localDateFin = joc.getFecha_final();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			String formattedStringInicio = localDateInicio.format(formatter);
-			String formattedStringFin = localDateFin.format(formatter);
-			String sql = "insert into jocs (idproducte,nom,preu,edat,idproveidor,stock,fecha_inicio,fecha_final,tipo) values('"+joc.getId()+"','"+joc.getNom()+"',"+joc.getPreu()+","+joc.getEdad_minima()+","+joc.getId_proveedor()+","+joc.getStock()+",'"+formattedStringInicio+"','"+formattedStringFin+"', 'Joc');";
-			stament.executeUpdate(sql);
+			PreparedStatement sta=conn.prepareStatement("insert into jocs (idproducte,nom,preu,idproveidor,stock,fecha_inicio,fecha_final,tipo,edat) values(?,?,?,?,?,?,?,?,?)");
+			sta.setString(1,joc.getId());
+			sta.setString(2, joc.getNom());
+			sta.setDouble(3, joc.getPreu());
+			sta.setInt(4, joc.getId_proveedor());
+			sta.setInt(5, joc.getStock());
+			sta.setDate(6, java.sql.Date.valueOf(joc.getFecha_inicio()));
+			sta.setDate(7, java.sql.Date.valueOf(joc.getFecha_final()));
+			sta.setString(8, "Joc");
+			sta.setInt(9, joc.getEdad_minima());
+			sta.executeUpdate();
+			sta.close();
 		}else if(productemp instanceof Pack) {
 			
 			Pack pack=(Pack)productemp;
@@ -65,10 +68,9 @@ public class Productos {
 	@SuppressWarnings("resource")
 	public Producto searchProducto(String id) {
 		try {
-			Statement stament=conn.createStatement();
-			String sql ="select tipo from productes where idproducte='"+id+"';";
-			ResultSet rs=stament.executeQuery(sql);
-			
+			PreparedStatement stament=conn.prepareStatement("select tipo from productes where idproducte=?");
+			stament.setString(1, id);			
+			ResultSet rs=stament.executeQuery();			
 			if(!rs.next()) return null;
 			
 			else {
@@ -76,8 +78,9 @@ public class Productos {
 				
 				switch (tipo) {
 					case "Joc":
-						sql = "select * from jocs where idproducte='"+id+"';";
-						rs=stament.executeQuery(sql);
+						stament=conn.prepareStatement("select * from jocs where idproducte=?");
+						stament.setString(1, id);
+						rs=stament.executeQuery();
 						
 						if(rs.next()) {
 						
@@ -90,8 +93,9 @@ public class Productos {
 						break;
 					
 					case "Pack":
-						sql = "select * from packs1 where idproducte='"+id+"';";
-						rs=stament.executeQuery(sql);
+						stament=conn.prepareStatement("select * from packs where idproducte=?");
+						stament.setString(1, id);
+						rs=stament.executeQuery();
 						
 						if(rs.next()) {						
 							Array array=rs.getArray("jocs");
@@ -125,18 +129,23 @@ public class Productos {
 	
 	
 	
-	public void updateProducto(Producto productemp) throws SQLException {
-		Statement stament = conn.createStatement();
+	public void updateProducto(Producto productemp) throws SQLException {		
 		String sql = null;
 		if(productemp instanceof Joc) {
 			Joc joc=(Joc)productemp;
-			LocalDate localDateInicio = joc.getFecha_inicio();
-			LocalDate localDateFin = joc.getFecha_final();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			String formattedStringInicio = localDateInicio.format(formatter);
-			String formattedStringFin = localDateFin.format(formatter);
-			sql = ("update jocs set idproducte='"+joc.getId()+"', nom='"+joc.getNom()+"', preu="+joc.getPreu()+", edat="+joc.getEdad_minima()+", idproveidor="+joc.getId_proveedor()+", stock="+joc.getStock()+", fecha_inicio='"+formattedStringInicio+"', fecha_final='"+formattedStringFin+"',tipo='Joc' where idproducte = '"+joc.getId_proveedor()+"';");
-			stament.executeUpdate(sql);
+			PreparedStatement stament = conn.prepareStatement("update jocs set idproducte=?, nom=?, preu=?, idproveidor=?, stock=?, fecha_inicio=?, fecha_final=?,tipo=?,edat=? where idproducte =?");
+			stament.setString(1,joc.getId());
+			stament.setString(2, joc.getNom());
+			stament.setDouble(3, joc.getPreu());
+			stament.setInt(4, joc.getId_proveedor());
+			stament.setInt(5, joc.getStock());
+			stament.setDate(6, java.sql.Date.valueOf(joc.getFecha_inicio()));
+			stament.setDate(7, java.sql.Date.valueOf(joc.getFecha_final()));
+			stament.setString(8, "Joc");
+			stament.setInt(9, joc.getEdad_minima());
+			stament.setString(10, joc.getId());
+			stament.executeUpdate();
+			stament.close();
 		} else if(productemp instanceof Pack) {
 			
 		}
@@ -147,11 +156,11 @@ public class Productos {
 	}
 	
 	public boolean deleteProducto(String id) throws SQLException{
-		Statement stament=conn.createStatement();
-		String sql ="delete from productes where idproducte='"+id+"';";
-		stament.executeUpdate(sql);
-		return true;
-		
+		PreparedStatement stament = conn.prepareStatement("delete from productes where idproducte=?");
+		stament.setString(1, id);
+		stament.executeUpdate();
+		stament.close();
+		return true;		
 	}
 	
 	
