@@ -1,7 +1,9 @@
 package modelo;
 
 import java.time.LocalDate;
+import javax.persistence.Entity;
 
+@Entity
 public final class Joc extends Producto{
 	
 	//Parametros de clase
@@ -9,7 +11,6 @@ public final class Joc extends Producto{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private int edad_minima;
 	
 	
@@ -24,7 +25,6 @@ public final class Joc extends Producto{
 	
 	public Joc() {
 		this("","",0.0,0,null,null,0,0);
-		
 	}
 
 	

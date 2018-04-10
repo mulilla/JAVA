@@ -3,16 +3,18 @@ package modelo;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import modelo.StockInsuficientException;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Producto implements Serializable {
 	
-	 //Parametros de clase
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	@Id
 	private String id;
 	private String nom;
 	private double preu;
@@ -21,8 +23,7 @@ public abstract class Producto implements Serializable {
 	private LocalDate fecha_final;
 	private int id_proveedor;
 	
-	//Contructores
-	
+
 	public Producto() {
 		this("","",0.0,0,null,null,1);
 			
@@ -37,9 +38,7 @@ public abstract class Producto implements Serializable {
 		this.id_proveedor=id_proveedor;
 	}
 	
-	
-	//Getters and Setters
-	
+
 	public String getId() {
 		return id;
 	}
