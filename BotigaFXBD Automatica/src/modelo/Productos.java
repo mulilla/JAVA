@@ -1,52 +1,60 @@
 package modelo;
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
 
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 
 public class Productos {
+	private EntityManager em;
 	
-	private Connection conn;
 	
-	public Productos(Connection conexionBD) {
-		this.conn=conexionBD;
+	public Productos(EntityManager em) {
+		this.em=em;
 	}
 
 
-	public void addProducto(Producto productemp) throws SQLException {
+	public void addProducto(Producto productemp) {
+		
+		EntityTransaction tx = em.getTransaction(); 
+		tx.begin();
+		
+		if(em.find(Producto.class, productemp.getId()) != null){
+			em.merge(productemp);
+			tx.commit();
+			
+		}else{
+			em.persist(productemp);
+			tx.commit();
+			
+		}
+
 	}
 	
 
 	@SuppressWarnings("resource")
 	public Producto searchProducto(String id) {
-		
-	}
-	
-	
-	
-	public void updateProducto(Producto productemp) throws SQLException {		
-		
-		
-	}
-	
-	public boolean deleteProducto(String id) throws SQLException{
+		return em.find(Producto.class, id);
 		
 	}
 	
 	
 	
 	
-	public void closeDB() throws SQLException {
-		if(conn!=null) conn.close();	
+	public boolean deleteProducto(String id){
+		EntityTransaction tx = em.getTransaction(); 
+		tx.begin();
+		em.remove(em.find(Producto.class, id));
+		em.flush();
+		tx.commit();
+		return true;
+		
+	}
+	
+	
+	
+	
+	public void closeDB(){
+		if(em!=null) em.close();	
 	}
 }

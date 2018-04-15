@@ -3,8 +3,9 @@ package modelo;
 import java.time.LocalDate;
 import javax.persistence.Entity;
 
+@SuppressWarnings("serial")
 @Entity
-public final class Joc extends Producto{
+public  class Joc extends Producto{
 	
 	//Parametros de clase
 	

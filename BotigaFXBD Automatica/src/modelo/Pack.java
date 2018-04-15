@@ -7,8 +7,9 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 
+@SuppressWarnings("serial")
 @Entity
-public final class Pack extends Producto {
+public class Pack extends Producto {
 	
 	
 	

@@ -1,9 +1,13 @@
 package controlador;
 
 import java.io.IOException;
-import java.sql.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import java.util.Locale.Category;
 
 import javafx.application.Application;
@@ -29,7 +33,7 @@ public class IniciBotonsController extends Application {
 	private Locale localitzacioDisplay = Locale.getDefault(Category.DISPLAY);
 	private ResourceBundle texts = ResourceBundle.getBundle("vista.Texts", localitzacioDisplay);
 	
-	private Connection conn;
+	
 	
 	@FXML
     private AnchorPane root;
@@ -40,21 +44,18 @@ public class IniciBotonsController extends Application {
     @FXML
     private Button btnSalir;
     
+    private EntityManager em;
+    
     
 	//COnstruct
 	public IniciBotonsController() {
 		super();
 		
 		try{
-			//Carregar el controlador per la BD PostgreSQL
-			Class.forName("org.postgresql.Driver");
-
-			//Establir la connexió amb la BD
-			String urlBaseDades = "jdbc:postgresql://192.168.123.35/botiga";
-			String usuari = "postgres";
-			String contrasenya = "Badia123";
-			conn = DriverManager.getConnection(urlBaseDades , usuari, contrasenya);
-			if(conn!=null) {
+			EntityManagerFactory emf=Persistence.createEntityManagerFactory("BotigaFXBD Automatica");
+			em = emf.createEntityManager();
+			
+			if(em!=null) {
 				System.out.println("Conexion DB establecida");
 			}
 
@@ -110,7 +111,7 @@ public class IniciBotonsController extends Application {
 		
 			ProductosController productoControler = (ProductosController)loaderview.getController();
 			try {
-				productoControler.setConnection(conn);
+				productoControler.setConnection(em);
 			} catch (Exception e1) {
 				System.out.println(e1.getMessage());
 			}
@@ -145,8 +146,8 @@ public class IniciBotonsController extends Application {
 			super.stop();
 			
 			try {
-				if (conn != null) conn.close();
-			} catch (SQLException e) {
+				if (em != null) em.close();
+			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 		}

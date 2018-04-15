@@ -3,10 +3,12 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/postgresql-42.2.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/EclipseLink 2.5.2">
-		<attributes>
-			<attribute name="owner.project.facets" value="jpt.jpa"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/commonj.sdo_2.1.1.v201112051852.jar"/>
+	<classpathentry kind="lib" path="lib/eclipselink.jar"/>
+	<classpathentry kind="lib" path="lib/javax.persistence_2.2.0.v201708071007.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.persistence.extension_2.7.1.v20171221-bd47e8f.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.persistence.jpa.modelgen_2.7.1.v20171221-bd47e8f.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.persistence.jpars_2.7.1.v20171221-bd47e8f.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,13 +3,13 @@ package controlador;
 //http://code.makery.ch/blog/javafx-8-event-handling-examples/
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.persistence.EntityManager;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,7 +31,7 @@ public class ProductosController {
 
 	private Stage ventana;
 	@SuppressWarnings("unused")
-	private Connection conn;
+	private EntityManager em;
 	private Productos dao_productos=null;
 
 	// Inyecion de los campos Producto
@@ -222,19 +222,8 @@ public class ProductosController {
 						Double.parseDouble(precioTextfield.getText()), Integer.parseInt(stockTexfield.getText()),
 						I_catalogoDatePicker.getValue(), f_catalogoDatePicker.getValue(),
 						Integer.parseInt(edadminimaTextfield.getText()), Integer.parseInt(proveedorTextField.getText()));
-				try {
-					
-					dao_productos.addProducto(juego);
-				} catch (SQLException e) {
-					
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.initOwner(ventana);
-					alert.setTitle("Error al guardar en la Base de Datos");
-					alert.setHeaderText("Error en el registro del juego");
-					alert.setContentText(e.getMessage());
-
-					alert.showAndWait();
-				}
+						dao_productos.addProducto(juego);
+			
 				
 			}
 
@@ -249,21 +238,8 @@ public class ProductosController {
 						I_catalogoDatePicker.getValue(), f_catalogoDatePicker.getValue(),
 						generateTreeSetfromString(listadejuegosTextfield.getText()),
 						Double.parseDouble(descuentoTextField.getText()));
-				try {
-					dao_productos.addProducto(pack);
-				} catch (SQLException e) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.initOwner(ventana);
-					alert.setTitle("Error al guardar en la BD");
-					alert.setHeaderText("Error en el registro del Pack");
-					alert.setContentText(e.getMessage());
-
-					alert.showAndWait();
-				
-				}
-				
-				
-				
+						dao_productos.addProducto(pack);
+		
 				
 			}
 			
@@ -317,7 +293,7 @@ public class ProductosController {
 	}
 
 	@FXML
-	private void OnActionmodificarButton(ActionEvent event) throws SQLException {
+	private void OnActionmodificarButton(ActionEvent event){
 		String value = tipoComboBox.getSelectionModel().getSelectedItem();
 
 		if (value.equals("Joc")) {
@@ -328,7 +304,7 @@ public class ProductosController {
 						Double.parseDouble(precioTextfield.getText()), Integer.parseInt(stockTexfield.getText()),
 						I_catalogoDatePicker.getValue(), f_catalogoDatePicker.getValue(),
 						Integer.parseInt(edadminimaTextfield.getText()), Integer.parseInt(proveedorTextField.getText()));
-				dao_productos.updateProducto(juego);
+				dao_productos.addProducto(juego);
 				
 			}
 
@@ -342,7 +318,7 @@ public class ProductosController {
 						I_catalogoDatePicker.getValue(), f_catalogoDatePicker.getValue(),
 						generateTreeSetfromString(listadejuegosTextfield.getText()),
 						Double.parseDouble(descuentoTextField.getText()));
-				dao_productos.updateProducto(pack);
+				dao_productos.addProducto(pack);
 				guardarButton.setDisable(false);
 				
 			}
@@ -368,8 +344,8 @@ public class ProductosController {
 	@FXML
 	private void OnActioneliminarButton(ActionEvent event) {
 		
-		String id=idTextfield.getText();
-		try {
+			String id=idTextfield.getText();
+		
 			dao_productos.deleteProducto(id);
 			limpiarFormulario();
 			nomTexfield.setDisable(true);
@@ -381,16 +357,8 @@ public class ProductosController {
 			datosTabpane.setDisable(true);
 			guardarButton.setDisable(true);
 			modificarButton.setDisable(true);
-		} catch (SQLException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.initOwner(ventana);
-			alert.setTitle("Error al borrar en la BD");
-			alert.setContentText(e.getMessage());
-
-			alert.showAndWait();
-		}
 		
-		
+			
 	}
 
 	@FXML
@@ -410,11 +378,11 @@ public class ProductosController {
 		this.ventana = ventana;
 	}
 	
-	public void setConnection(Connection conn) throws Exception {
-		this.conn=conn;
+	public void setConnection(EntityManager em) throws Exception {
+		this.em=em;
 		
-		if(conn!=null) {
-			dao_productos=new Productos(conn);
+		if(em!=null) {
+			dao_productos=new Productos(em);
 		}else {
 			Exception error= new Exception("La conexion a la BD no se ha podido establecer desde el controlador");
 			throw error;
@@ -425,13 +393,9 @@ public class ProductosController {
 
 	public void salir() throws IOException {
 
-		try {
+		
 			dao_productos.closeDB();
-		} catch (SQLException e) {
-			
-			e.printStackTrace();
-		}
-		ventana.close();
+			ventana.close();
 
 	}
 
