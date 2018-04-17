@@ -7,9 +7,9 @@
 		<class>modelo.Producto</class>
 		<properties>
 			<property name="eclipselink.target-server" value="None"/>
-			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.1.108:5432/botigajpa"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://192.168.123.35:5432/botigajpa"/>
 			<property name="javax.persistence.jdbc.user" value="postgres"/>
-			<property name="javax.persistence.jdbc.password" value="Badia123$"/>
+			<property name="javax.persistence.jdbc.password" value="Badia123"/>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
 			<property name="eclipselink.ddl-generation.output-mode" value="database"/>
 		</properties>
